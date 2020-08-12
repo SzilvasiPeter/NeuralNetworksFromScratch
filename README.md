@@ -1,1 +1,2 @@
 #NeuralNetworksFromScratch
+readme.md change
