@@ -3,31 +3,64 @@ using System.Collections.Generic;
 
 namespace NeuralNetworksFromScratch
 {
+    public class Matrix
+    {
+        public List<List<double>> Row { get; }
+        public List<List<double>> Column { get; }
+
+        public int ColumnNumber { get; set; }
+
+        public Matrix()
+        {
+            Row = new List<List<double>>();
+            Column = new List<List<double>>();
+        }
+
+        public void AddRow(List<double> row)
+        {
+            Row.Add(row);
+            ColumnNumber++;
+        }
+    }
     class Program
     {
-        private static readonly List<double> Inputs = new List<double>() { 1, 2, 3, 2.5 };
+        private static readonly List<double> Inputs = new List<double>() { 1.0, 2.0, 3.0, 2.50 };
         
-        private static readonly List<List<double>> Weights = new List<List<double>>()
-        {
-            new List<double>(){0.2, 0.8, -0.5, 1.0},
-            new List<double>(){0.5, -0.91, 0.26, -0.5},
-            new List<double>(){-0.26, -0.27, 0.17, 0.87}
-        };
+        private static readonly Matrix Weights = new Matrix();
 
-        private static readonly List<double> Bias = new List<double>(){ 2, 3, 0.5};
+        private static readonly List<double> Biases = new List<double>(){ 2.0, 3.0, 0.5};
 
         public static void Main(string[] args)
         {
-            List<double> outputs = new List<double>
-            {
-                Inputs[0] * Weights[0][0] + Inputs[1] * Weights[0][1] + Inputs[2] * Weights[0][2] + Inputs[3] * Weights[0][3] + Bias[0],
-                Inputs[0] * Weights[1][0] + Inputs[1] * Weights[1][1] + Inputs[2] * Weights[1][2] + Inputs[3] * Weights[1][3] + Bias[1],
-                Inputs[0] * Weights[2][0] + Inputs[1] * Weights[2][1] + Inputs[2] * Weights[2][2] + Inputs[3] * Weights[2][3] + Bias[2]
-            };
+            Weights.AddRow(new List<double>(){0.20, 0.80, -0.50, 1.0});
+            Weights.AddRow(new List<double>(){0.50, -0.910, 0.260, -0.50});
+            Weights.AddRow(new List<double>(){-0.260, -0.270, 0.170, 0.870});
+
+            List<double> outputs = DotProduct(Inputs, Weights, Biases);
+            
             foreach (var output in outputs)
             {
                 Console.WriteLine(output);
             }
+        }
+
+        public static List<double> DotProduct(List<double> inputVector, Matrix leftMatrix, List<double> Biases)
+        {
+            List<double> outputVector = new List<double>();
+            int columnNumber = leftMatrix.ColumnNumber;
+            for (int i = 0; i < columnNumber; i++)
+            {
+                double outputElement = 0;
+                for (int j = 0; j < leftMatrix.Row[i].Count; j++)
+                {
+                    outputElement += leftMatrix.Row[i][j] * inputVector[j];
+                }
+
+                outputElement += Biases[i];
+                outputVector.Add(outputElement);
+            }
+
+            return outputVector;
         }
     }
 }
