@@ -44,19 +44,19 @@ namespace NeuralNetworksFromScratch
             }
         }
 
-        public static List<double> DotProduct(List<double> inputVector, Matrix leftMatrix, List<double> Biases)
+        public static List<double> DotProduct(List<double> inputVector, Matrix weightsMatrix, List<double> biases)
         {
             List<double> outputVector = new List<double>();
-            int columnNumber = leftMatrix.ColumnNumber;
+            int columnNumber = weightsMatrix.ColumnNumber;
             for (int i = 0; i < columnNumber; i++)
             {
                 double outputElement = 0;
-                for (int j = 0; j < leftMatrix.Row[i].Count; j++)
+                for (int j = 0; j < weightsMatrix.Row[i].Count; j++)
                 {
-                    outputElement += leftMatrix.Row[i][j] * inputVector[j];
+                    outputElement += weightsMatrix.Row[i][j] * inputVector[j];
                 }
 
-                outputElement += Biases[i];
+                outputElement += biases[i];
                 outputVector.Add(outputElement);
             }
 
