@@ -13,10 +13,10 @@ namespace NeuralNetworksFromScratch
         {
             Weights = new Matrix();
             Biases = new List<double>();
-            for (int i = 0; i < numberOfInputs; i++)
+            for (int i = 0; i < numberOfNeurons; i++)
             {
                 List<double> generatedList = new List<double>();
-                for (int j = 0; j < numberOfNeurons; j++)
+                for (int j = 0; j < numberOfInputs; j++)
                 {
                     generatedList.Add(_randomDouble.NextDouble());
                 }
