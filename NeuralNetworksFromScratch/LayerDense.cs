@@ -18,7 +18,7 @@ namespace NeuralNetworksFromScratch
                 List<double> generatedList = new List<double>();
                 for (int j = 0; j < numberOfInputs; j++)
                 {
-                    generatedList.Add(_randomDouble.NextDouble());
+                    generatedList.Add(0.1 * _randomDouble.NextDouble());
                 }
                 Weights.AddRow(generatedList);
                 Biases.Add(0);
