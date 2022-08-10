@@ -1,6 +1,9 @@
 from abc import abstractmethod
 from typing import Union
+
 import numpy as np
+import pandas as pd
+
 import tqdm
 
 from layers import Layer, ParamLayer, SoftMaxCrossEntropyLoss, SoftmaxLayer
@@ -53,5 +56,21 @@ class NeuralNetwork():
         return float(np.mean(loss)), accuracy
 
 
+def load_data():
+    train = pd.read_csv('dataset/mnist_train.csv')
+    test = pd.read_csv('dataset/mnist_test.csv')
+
+    x_train = train.iloc[:, 1:].to_numpy()
+    y_train = train.iloc[:, 0].to_numpy()
+    x_test = test.iloc[:, 1:].to_numpy()
+    y_test = test.iloc[:, 0].to_numpy()
+
+    return x_train, y_train, x_test, y_test
+
+def scale(x_train, y_train):
+    x_train = x_train / 255.0
+    y_train = y_train / 255.0
+
 if __name__ == '__main__':
-    pass
+    x_train, y_train, x_test, y_test = load_data()
+    scale(x_train, y_train)
