@@ -74,6 +74,15 @@ def scale(x_train, x_test):
     x_train = x_train / 255.0
     x_test = x_test / 255.0
 
+    return x_train, x_test
+
+
+def one_hot(y_train, y_test):
+    y_train = np.identity(10)[y_train.reshape(-1)]
+    y_test = np.identity(10)[y_test.reshape(-1)]
+
+    return y_train, y_test
+    
 
 if __name__ == '__main__':
     x_train, y_train, x_test, y_test = load_data()
