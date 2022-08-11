@@ -1,12 +1,11 @@
 from abc import abstractmethod
 from typing import Union
+from tqdm import tqdm
 
 import numpy as np
 import pandas as pd
 
-import tqdm
-
-from layers import Layer, ParamLayer, SoftMaxCrossEntropyLoss, SoftmaxLayer
+from layers import CrossEntropyLoss, Layer, LinearLayer, ParamLayer, SigmoidLayer, SoftMaxCrossEntropyLoss, SoftmaxLayer
 
 
 class NeuralNetwork():
@@ -15,20 +14,22 @@ class NeuralNetwork():
         self.loss_layer: Union[Layer, None] = None
 
     def predict(self, X):
+        output = X
         for layer in self.layers:
-            output = layer.forward(X)
+            output = layer.forward(output)
+
         return output
 
     def fit(self, X_train, y_train, x_test, y_test, epochs=1000, learning_rate=0.01):
         metrics = np.zeros((epochs, 2))  # loss, accuracy
-        self.loss_layer = SoftMaxCrossEntropyLoss(y_train)
         for epoch in tqdm(range(epochs)):
             y_pred = self.predict(X_train)
+            self.loss_layer = SoftMaxCrossEntropyLoss(y_train)
             self.loss_layer.forward(y_pred)
             self.backward_propagation(y_pred)
             self.update_params(learning_rate)
 
-            loss, accuracy = self.evaluate_model(x_test, y_test)
+            loss, accuracy = self.evaluate(x_test, y_test)
             metrics[epoch, :] = loss, accuracy
 
         return metrics
@@ -44,8 +45,8 @@ class NeuralNetwork():
             if isinstance(layer, ParamLayer):
                 layer.apply_gradients(learning_rate)
 
-    def  evaluate(self, X_test, y_test):
-        self.loss_layer = SoftmaxLayer(y_test)
+    def evaluate(self, X_test, y_test):
+        self.loss_layer = CrossEntropyLoss(y_test)
         y_pred = self.predict(X_test)
 
         y_pred_labels = np.argmax(y_pred, axis=1)
@@ -53,6 +54,7 @@ class NeuralNetwork():
 
         loss = self.loss_layer.forward(y_pred)
         accuracy = np.sum(y_labels == y_pred_labels) / X_test.shape[0]
+
         return float(np.mean(loss)), accuracy
 
 
@@ -67,10 +69,12 @@ def load_data():
 
     return x_train, y_train, x_test, y_test
 
-def scale(x_train, y_train):
+
+def scale(x_train, x_test):
     x_train = x_train / 255.0
-    y_train = y_train / 255.0
+    x_test = x_test / 255.0
+
 
 if __name__ == '__main__':
     x_train, y_train, x_test, y_test = load_data()
-    scale(x_train, y_train)
+    scale(x_train, x_test)
