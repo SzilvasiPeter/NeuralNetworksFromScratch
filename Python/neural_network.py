@@ -82,8 +82,45 @@ def one_hot(y_train, y_test):
     y_test = np.identity(10)[y_test.reshape(-1)]
 
     return y_train, y_test
-    
+
+
+def create_small_dataset(x_train, y_train, x_test, y_test):
+    num_train = 1000
+    num_dev = 200
+
+    small_x_train = x_train[:num_train, :]
+    small_y_train = y_train[:num_train, :]
+    small_x_test = x_test[:num_dev, :]
+    small_y_test = y_test[:num_dev, :]
+
+    return small_x_train, small_y_train, small_x_test, small_y_test
+
 
 if __name__ == '__main__':
     x_train, y_train, x_test, y_test = load_data()
-    scale(x_train, x_test)
+    y_train, y_test = scale(x_train, x_test)
+    y_train, y_test = one_hot(y_train, y_test)
+
+    small_x_train, small_y_train, small_x_test, small_y_test = create_small_dataset(
+        x_train, y_train, x_test, y_test)
+
+    neural_network = NeuralNetwork(layers=[
+        LinearLayer(small_x_train.shape[1], 30),
+        SigmoidLayer(),
+        LinearLayer(30, 10),
+        SigmoidLayer(),
+        LinearLayer(10, small_y_train.shape[1]),
+        SigmoidLayer(),
+    ])
+
+    metrics = neural_network.fit(small_x_train, small_y_train,
+                       small_x_test, small_y_test, epochs=1000)
+
+    print(metrics)
+    
+    example = 300
+    output = neural_network.predict(x_test[example, :])
+    print(y_test[example,:])
+    print(output)
+    print(np.argmax(y_train))
+    print(np.argmax(output))
