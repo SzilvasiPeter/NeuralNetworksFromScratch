@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 
 epsilon = 10 ** -3
 
+
 class Layer(ABC):
 
     @abstractmethod
@@ -22,9 +23,10 @@ class ParamLayer(Layer, ABC):
 
 
 class LinearLayer(ParamLayer):
-    
+
     def __init__(self, input_dim, output_dim):
-        self.weights = np.random.normal(0.0, 0.1, size=input_dim*output_dim).reshape(input_dim, output_dim)
+        self.weights = np.random.normal(
+            0.0, 0.1, size=input_dim*output_dim).reshape(input_dim, output_dim)
         self.biases = np.zeros((1, output_dim))
 
         self.x = np.zeros(0)
@@ -97,7 +99,7 @@ class SoftmaxLayer(Layer):
         return self.x
 
     def backward(self, grad_input):
-        softmax = self.next_x.reshape(-1,1)
+        softmax = self.x.reshape(-1, 1)
         return grad_input * (np.diagflat(softmax) - np.dot(softmax, softmax.T))
 
 
@@ -123,7 +125,7 @@ class SoftMaxCrossEntropyLoss(Layer):
         self.x = np.zeros(0)
 
     def forward(self, x):
-        self.x = np.clip(x, epsilon, 1.0 - epsilon) 
+        self.x = np.clip(x, epsilon, 1.0 - epsilon)
         return -(np.sum(self.y * np.log(x), axis=0))
 
     def backward(self, grad_input):
