@@ -67,11 +67,11 @@ class RectifiedLinearUnitsLayer(Layer):
         self.activation = np.zeros(0)
 
     def forward(self, x):
-        self.activation = np.max(0, x)
+        self.activation = x * (x > 0)
         return self.activation
 
     def backward(self, grad_input):
-        return grad_input if self.activation > 0 else 0
+        return grad_input * 1.0 * (self.activation > 0)
 
 
 class SquaredErrorLayer(Layer):

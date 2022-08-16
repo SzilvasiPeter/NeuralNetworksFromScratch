@@ -5,7 +5,7 @@ from tqdm import tqdm
 import numpy as np
 import pandas as pd
 
-from layers import CrossEntropyLoss, Layer, LinearLayer, ParamLayer, SigmoidLayer, SoftMaxCrossEntropyLoss, SoftmaxLayer
+from layers import CrossEntropyLoss, Layer, LinearLayer, ParamLayer, RectifiedLinearUnitsLayer, SigmoidLayer, SoftMaxCrossEntropyLoss
 
 
 class NeuralNetwork():
@@ -20,7 +20,7 @@ class NeuralNetwork():
 
         return output
 
-    def fit(self, X_train, y_train, x_test, y_test, epochs=1000, learning_rate=0.01):
+    def fit(self, X_train, y_train, x_test, y_test, epochs=1000, learning_rate=0.001):
         metrics = np.zeros((epochs, 2))  # loss, accuracy
         for epoch in tqdm(range(epochs)):
             y_pred = self.predict(X_train)
@@ -85,8 +85,8 @@ def one_hot(y_train, y_test):
 
 
 def create_small_dataset(x_train, y_train, x_test, y_test):
-    num_train = 1000
-    num_dev = 200
+    num_train = 30000
+    num_dev = 6000
 
     small_x_train = x_train[:num_train, :]
     small_y_train = y_train[:num_train, :]
@@ -98,7 +98,7 @@ def create_small_dataset(x_train, y_train, x_test, y_test):
 
 if __name__ == '__main__':
     x_train, y_train, x_test, y_test = load_data()
-    y_train, y_test = scale(x_train, x_test)
+    x_train, x_test = scale(x_train, x_test)
     y_train, y_test = one_hot(y_train, y_test)
 
     small_x_train, small_y_train, small_x_test, small_y_test = create_small_dataset(
@@ -116,6 +116,7 @@ if __name__ == '__main__':
     metrics = neural_network.fit(small_x_train, small_y_train,
                        small_x_test, small_y_test, epochs=1000)
 
+    np.set_printoptions(precision=6, suppress=True)
     print(metrics)
     
     example = 300
